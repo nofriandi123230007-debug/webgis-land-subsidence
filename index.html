@@ -1,171 +1,2527 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>WebGIS Land Subsidence</title>
+<meta charset="UTF-8">
 
-    <!-- CSS Leaflet -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+<title>
+WebGIS Land Subsidence - Desa Sidodadi
+</title>
 
-        .header {
-            background: #ffffff;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #cccccc;
-        }
 
-        .header h2 {
-            margin: 0;
-        }
+<!-- =====================================================
+     LEAFLET CSS
+===================================================== -->
 
-        .header p {
-            margin: 5px 0 0;
-        }
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
-        #map {
-            width: 100%;
-            height: calc(100vh - 90px);
-        }
-    </style>
+
+<style>
+
+/* =====================================================
+   DASAR
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    height: 70px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #123b4a,
+        #17657a,
+        #2196a6
+    );
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    box-shadow:
+    0 3px 15px rgba(0,0,0,0.20);
+
+    position: relative;
+
+    z-index: 1000;
+}
+
+
+.header-left {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.logo {
+
+    width: 43px;
+
+    height: 43px;
+
+    border-radius: 11px;
+
+    background:
+    rgba(255,255,255,0.16);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+
+.title {
+
+    font-size: 18px;
+
+    font-weight: bold;
+}
+
+
+.subtitle {
+
+    font-size: 10px;
+
+    margin-top: 4px;
+
+    color: #d7edf1;
+}
+
+
+.group {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    text-align: right;
+}
+
+
+.group-small {
+
+    font-size: 9px;
+
+    margin-top: 4px;
+
+    color: #d7edf1;
+}
+
+
+/* =====================================================
+   LAYOUT
+===================================================== */
+
+.main {
+
+    width: 100%;
+
+    height:
+    calc(100vh - 70px);
+
+    display: flex;
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+
+    width: 315px;
+
+    height: 100%;
+
+    padding: 15px;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    box-shadow:
+    3px 0 12px
+    rgba(0,0,0,0.12);
+
+    z-index: 900;
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+.location-card {
+
+    background:
+    linear-gradient(
+        135deg,
+        #123b4a,
+        #218c9e
+    );
+
+    color: white;
+
+    border-radius: 15px;
+
+    padding: 18px;
+
+    margin-bottom: 13px;
+
+    box-shadow:
+    0 5px 15px
+    rgba(18,59,74,0.22);
+}
+
+
+.location-small {
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    color: #c9e7eb;
+}
+
+
+.location-name {
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    margin-top: 5px;
+}
+
+
+.location-description {
+
+    font-size: 10px;
+
+    line-height: 1.6;
+
+    margin-top: 8px;
+
+    color: #e0f1f4;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card {
+
+    background: white;
+
+    border:
+    1px solid #e2eaec;
+
+    border-radius: 13px;
+
+    padding: 13px;
+
+    margin-bottom: 13px;
+
+    box-shadow:
+    0 2px 8px
+    rgba(0,0,0,0.04);
+}
+
+
+.card-title {
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    color: #263238;
+
+    margin-bottom: 10px;
+}
+
+
+/* =====================================================
+   ANGGOTA
+===================================================== */
+
+.member {
+
+    background: #f4f8f9;
+
+    border-left:
+    4px solid #218c9e;
+
+    border-radius: 7px;
+
+    padding: 8px;
+
+    margin-bottom: 7px;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    color: #455a64;
+}
+
+
+/* =====================================================
+   LEGENDA
+===================================================== */
+
+.legend {
+
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 10px;
+
+    font-size: 10px;
+
+    color: #455a64;
+}
+
+
+.legend-color {
+
+    width: 18px;
+
+    height: 18px;
+
+    border-radius: 50%;
+
+    margin-right: 9px;
+
+    border: 2px solid white;
+
+    box-shadow:
+    0 1px 5px
+    rgba(0,0,0,0.30);
+}
+
+
+.green {
+    background: #2e7d32;
+}
+
+
+.orange {
+    background: #f57c00;
+}
+
+
+.red {
+    background: #c62828;
+}
+
+
+.gray {
+    background: #607d8b;
+}
+
+
+/* =====================================================
+   INFO
+===================================================== */
+
+.info {
+
+    background: #f5fafb;
+
+    border:
+    1px solid #dcecef;
+
+    border-radius: 9px;
+
+    padding: 11px;
+
+    font-size: 10px;
+
+    line-height: 1.65;
+
+    color: #607d8b;
+}
+
+
+/* =====================================================
+   PETA
+===================================================== */
+
+#map {
+
+    flex: 1;
+
+    height: 100%;
+
+    position: relative;
+}
+
+
+/* =====================================================
+   JUDUL PETA
+===================================================== */
+
+.map-title {
+
+    position: absolute;
+
+    top: 15px;
+
+    left: 15px;
+
+    z-index: 500;
+
+    background:
+    rgba(255,255,255,0.96);
+
+    padding:
+    11px 15px;
+
+    border-radius: 11px;
+
+    box-shadow:
+    0 3px 12px
+    rgba(0,0,0,0.18);
+}
+
+
+.map-title-main {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #263238;
+}
+
+
+.map-title-sub {
+
+    font-size: 9px;
+
+    color: #78909c;
+
+    margin-top: 3px;
+}
+
+
+/* =====================================================
+   LABEL TITIK
+===================================================== */
+
+.point-label {
+
+    background: white;
+
+    border:
+    1px solid #cfd8dc;
+
+    border-radius: 5px;
+
+    padding:
+    3px 6px;
+
+    font-size: 9px;
+
+    font-weight: bold;
+
+    color: #263238;
+
+    white-space: nowrap;
+
+    box-shadow:
+    0 2px 6px
+    rgba(0,0,0,0.25);
+}
+
+
+/* =====================================================
+   POPUP
+===================================================== */
+
+.popup {
+
+    min-width: 255px;
+}
+
+
+.popup-header {
+
+    background:
+    linear-gradient(
+        135deg,
+        #123b4a,
+        #218c9e
+    );
+
+    color: white;
+
+    margin:
+    -13px -20px 12px -20px;
+
+    padding:
+    13px 15px;
+
+    border-radius:
+    5px 5px 0 0;
+}
+
+
+.popup-title {
+
+    font-size: 15px;
+
+    font-weight: bold;
+}
+
+
+.popup-subtitle {
+
+    font-size: 9px;
+
+    margin-top: 4px;
+
+    color: #d7edf1;
+}
+
+
+.section-title {
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    color: #17657a;
+
+    margin-top: 11px;
+
+    margin-bottom: 7px;
+
+    padding-bottom: 5px;
+
+    border-bottom:
+    1px solid #e5eeee;
+}
+
+
+.data-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 5px 0;
+
+    font-size: 10px;
+}
+
+
+.data-label {
+
+    color: #78909c;
+}
+
+
+.data-value {
+
+    color: #263238;
+
+    font-weight: bold;
+
+    text-align: right;
+
+    max-width: 160px;
+
+    word-break: break-word;
+}
+
+
+/* =====================================================
+   DU
+===================================================== */
+
+.du-box {
+
+    text-align: center;
+
+    margin-top: 10px;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    background: #f4f7f8;
+}
+
+
+.du-title {
+
+    font-size: 9px;
+
+    color: #78909c;
+}
+
+
+.du-value {
+
+    font-size: 27px;
+
+    font-weight: bold;
+
+    margin-top: 2px;
+}
+
+
+.status {
+
+    display: inline-block;
+
+    margin-top: 5px;
+
+    padding:
+    4px 10px;
+
+    border-radius: 20px;
+
+    font-size: 8px;
+
+    font-weight: bold;
+}
+
+
+.status-low {
+
+    background: #e8f5e9;
+
+    color: #2e7d32;
+}
+
+
+.status-medium {
+
+    background: #fff3e0;
+
+    color: #ef6c00;
+}
+
+
+.status-high {
+
+    background: #ffebee;
+
+    color: #c62828;
+}
+
+
+.status-none {
+
+    background: #eceff1;
+
+    color: #607d8b;
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform:
+    translate(-50%, -50%);
+
+    z-index: 2000;
+
+    background: white;
+
+    padding:
+    18px 25px;
+
+    border-radius: 12px;
+
+    box-shadow:
+    0 4px 20px
+    rgba(0,0,0,0.20);
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+.error-box {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform:
+    translate(-50%, -50%);
+
+    z-index: 3000;
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 13px;
+
+    box-shadow:
+    0 4px 20px
+    rgba(0,0,0,0.25);
+
+    width: 90%;
+
+    max-width: 480px;
+
+    text-align: center;
+
+    color: #c62828;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:768px) {
+
+    .header {
+
+        height: 65px;
+
+        padding: 0 12px;
+    }
+
+    .title {
+
+        font-size: 13px;
+    }
+
+    .subtitle {
+
+        font-size: 8px;
+    }
+
+    .group {
+
+        display: none;
+    }
+
+    .main {
+
+        height:
+        calc(100vh - 65px);
+
+        flex-direction: column;
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+        height: 40%;
+
+        max-height: 40%;
+    }
+
+    #map {
+
+        width: 100%;
+
+        height: 60%;
+    }
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-    <div class="header">
-        <h2>WebGIS Land Subsidence</h2>
-        <p>Di Desa Sidodadi</p>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="header">
+
+
+    <div class="header-left">
+
+
+        <div class="logo">
+            🗺️
+        </div>
+
+
+        <div>
+
+            <div class="title">
+                WEBGIS LAND SUBSIDENCE
+            </div>
+
+            <div class="subtitle">
+                Visualisasi Perubahan Permukaan Tanah
+            </div>
+
+        </div>
+
+
     </div>
 
-    <div id="map"></div>
 
-    <!-- JavaScript Leaflet -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <div class="group">
 
-    <script>
-        // Membuat peta
-        const map = L.map('map').setView([-5.55, 105.23], 14);
+        KELOMPOK 6
 
-        // Basemap OpenStreetMap
-        L.tileLayer(
-            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            {
-                maxZoom: 19,
-                attribution: '&copy; OpenStreetMap contributors'
-            }
-        ).addTo(map);
+        <div class="group-small">
+            📍 Desa Sidodadi
+        </div>
 
-        // Fungsi untuk membaca nilai DU walaupun nama field berbeda huruf besar/kecil
-        function ambilDU(properties) {
-            return properties.dU ??
-                   properties.DU ??
-                   properties.du ??
-                   properties.Du ??
-                   '-';
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<div class="main">
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <div class="sidebar">
+
+
+        <!-- LOKASI -->
+
+        <div class="location-card">
+
+            <div class="location-small">
+                LOKASI PENELITIAN
+            </div>
+
+
+            <div class="location-name">
+                Desa Sidodadi
+            </div>
+
+
+            <div class="location-description">
+
+                WebGIS menampilkan titik pengamatan
+                GNSS serta informasi perubahan
+                posisi permukaan tanah.
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ANGGOTA -->
+
+        <div class="card">
+
+            <div class="card-title">
+                👥 ANGGOTA KELOMPOK 6
+            </div>
+
+
+            <div class="member">
+                Nofriandi
+            </div>
+
+
+            <div class="member">
+                Larki Izzati Reanisiah Gunawan
+            </div>
+
+
+            <div class="member">
+                Fadhillah Syahla Daulay
+            </div>
+
+
+            <div class="member">
+                Naufal Syafiq
+            </div>
+
+
+            <div class="member">
+                Ryamizard Akbar Zulkarnain
+            </div>
+
+        </div>
+
+
+
+        <!-- LEGENDA -->
+
+        <div class="card">
+
+            <div class="card-title">
+                🎨 KETERANGAN NILAI dU
+            </div>
+
+
+            <div class="legend">
+
+                <div class="legend-color green"></div>
+
+                <div>
+
+                    <b>Rendah</b>
+
+                    <br>
+
+                    dU &lt; 0,30
+
+                </div>
+
+            </div>
+
+
+            <div class="legend">
+
+                <div class="legend-color orange"></div>
+
+                <div>
+
+                    <b>Sedang</b>
+
+                    <br>
+
+                    dU 0,30 – &lt; 0,50
+
+                </div>
+
+            </div>
+
+
+            <div class="legend">
+
+                <div class="legend-color red"></div>
+
+                <div>
+
+                    <b>Tinggi</b>
+
+                    <br>
+
+                    dU ≥ 0,50
+
+                </div>
+
+            </div>
+
+
+            <div class="legend">
+
+                <div class="legend-color gray"></div>
+
+                <div>
+
+                    <b>Data tidak tersedia</b>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CARA MEMBACA PETA
+        ================================================== -->
+
+        <div class="card">
+
+            <div class="card-title">
+
+                💡 CARA MEMBACA PETA
+
+            </div>
+
+
+            <div class="info">
+
+
+                <b>① Titik Pengamatan</b>
+
+                <br>
+
+                Titik pada peta menunjukkan lokasi
+                pengamatan land subsidence di
+                Desa Sidodadi.
+
+                Klik titik untuk melihat informasi
+                lengkap.
+
+                <br><br>
+
+
+
+                <b>② dE – Perubahan Timur-Barat</b>
+
+                <br>
+
+                <b>dE (Delta East)</b> menunjukkan
+                perubahan posisi titik pada arah
+                <b>Timur-Barat</b>.
+
+                Nilai dE menggambarkan pergeseran
+                posisi secara horizontal.
+
+                <br><br>
+
+
+
+                <b>③ dN – Perubahan Utara-Selatan</b>
+
+                <br>
+
+                <b>dN (Delta North)</b> menunjukkan
+                perubahan posisi titik pada arah
+                <b>Utara-Selatan</b>.
+
+                Nilai dN menggambarkan pergeseran
+                posisi secara horizontal.
+
+                <br><br>
+
+
+
+                <b>④ dU – Perubahan Vertikal</b>
+
+                <br>
+
+                <b>dU (Delta Up)</b> menunjukkan
+                perubahan posisi titik pada arah
+                <b>vertikal</b>.
+
+                Nilai dU digunakan untuk melihat
+                perubahan ketinggian atau perubahan
+                naik-turunnya permukaan tanah.
+
+                <br><br>
+
+
+
+                <b>⑤ Cara Memahami Nilai dU</b>
+
+                <br>
+
+                <b>dU positif (+)</b> menunjukkan
+                perubahan posisi ke arah atas.
+
+                <br>
+
+                <b>dU negatif (−)</b> menunjukkan
+                perubahan posisi ke arah bawah
+                atau penurunan permukaan tanah.
+
+                <br><br>
+
+
+
+                <b>⑥ Warna Titik</b>
+
+                <br>
+
+                Warna titik membantu menunjukkan
+                perbedaan nilai dU pada setiap
+                titik pengamatan.
+
+                <br><br>
+
+                <b>🟢 Hijau</b> = dU rendah
+
+                <br>
+
+                <b>🟠 Oranye</b> = dU sedang
+
+                <br>
+
+                <b>🔴 Merah</b> = dU tinggi
+
+                <br><br>
+
+
+
+                <b>⑦ Informasi Titik</b>
+
+                <br>
+
+                Klik titik pada peta untuk melihat:
+
+                <br>
+
+                • ID titik
+
+                <br>
+
+                • Latitude
+
+                <br>
+
+                • Longitude
+
+                <br>
+
+                • dE (Timur-Barat)
+
+                <br>
+
+                • dN (Utara-Selatan)
+
+                <br>
+
+                • dU (Vertikal)
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <div
+            class="footer"
+            style="
+                text-align:center;
+                font-size:9px;
+                color:#90a4ae;
+                padding:8px 0;
+            "
+        >
+
+            WEBGIS LAND SUBSIDENCE
+
+            <br>
+
+            KELOMPOK 6
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         PETA
+    ================================================== -->
+
+    <div id="map">
+
+
+        <div class="map-title">
+
+            <div class="map-title-main">
+
+                📍 PETA LAND SUBSIDENCE
+
+            </div>
+
+            <div class="map-title-sub">
+
+                Desa Sidodadi
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="loading"
+            class="loading"
+        >
+
+            ⏳ Membaca DU_WebGIS.json...
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     LEAFLET JAVASCRIPT
+===================================================== -->
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+
+<script>
+
+/* =====================================================
+   1. MEMBUAT PETA
+===================================================== */
+
+var map =
+    L.map("map");
+
+
+/* =====================================================
+   2. OPENSTREETMAP
+===================================================== */
+
+var osm =
+    L.tileLayer(
+
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+        {
+
+            maxZoom: 20,
+
+            attribution:
+            "&copy; OpenStreetMap contributors"
+
         }
 
-        // Membaca file GeoJSON
-        fetch('DU_WebGIS.json')
-            .then(response => response.json())
-            .then(data => {
+    ).addTo(map);
 
-                const layerDU = L.geoJSON(data, {
 
-                    // Tampilan titik
-                    pointToLayer: function(feature, latlng) {
+/* =====================================================
+   3. CITRA SATELIT
+===================================================== */
 
-                        const du = Number(ambilDU(feature.properties));
+var satellite =
+    L.tileLayer(
 
-                        let warna = 'blue';
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
 
-                        if (!isNaN(du)) {
-                            if (du >= 0.5) {
-                                warna = 'red';
-                            } else {
-                                warna = 'green';
-                            }
-                        }
+        {
 
-                        return L.circleMarker(latlng, {
-                            radius: 9,
-                            fillColor: warna,
-                            color: '#000000',
-                            weight: 1,
-                            opacity: 1,
-                            fillOpacity: 0.9
-                        });
-                    },
+            maxZoom: 20,
 
-                    // Informasi ketika titik diklik
-                    onEachFeature: function(feature, layer) {
+            attribution:
+            "Tiles &copy; Esri"
 
-                        const p = feature.properties;
-                        const du = ambilDU(p);
+        }
 
-                        const popup = `
-                            <b>Data Land Subsidence</b><br><br>
-                            <b>ID:</b> ${p.ID ?? '-'}<br>
-                            <b>Longitude:</b> ${p.Longitude ?? '-'}<br>
-                            <b>Latitude:</b> ${p.Latitude ?? '-'}<br>
-                            <b>dN:</b> ${p.dN ?? '-'}<br>
-                            <b>dE:</b> ${p.dE ?? '-'}<br>
-                            <b>DU:</b> ${du}
-                        `;
+    );
 
-                        layer.bindPopup(popup);
-                    }
 
-                }).addTo(map);
+/* =====================================================
+   4. KONTROL BASEMAP
+===================================================== */
 
-                // Zoom otomatis mengikuti data
-                map.fitBounds(layerDU.getBounds(), {
-                    padding: [50, 50],
-                    maxZoom: 16
-                });
-            })
+L.control.layers(
 
-            .catch(error => {
-                console.error('Data GeoJSON gagal dibaca:', error);
-            });
+    {
 
-        // Scale bar
-        L.control.scale({
-            metric: true,
-            imperial: false
-        }).addTo(map);
-        // Legenda
-const legend = L.control({position: 'bottomright'});
+        "🗺️ Peta Jalan":
+            osm,
 
-legend.onAdd = function(map) {
+        "🛰️ Citra Satelit":
+            satellite
 
-    const div = L.DomUtil.create('div', 'info legend');
+    },
 
-    div.innerHTML = `
-        <b>Keterangan DU</b><br>
-        <span style="display:inline-block;width:15px;height:15px;background:green;border-radius:50%;"></span>
-        DU &lt; 0,5<br>
+    null,
 
-        <span style="display:inline-block;width:15px;height:15px;background:red;border-radius:50%;"></span>
-        DU ≥ 0,5
+    {
+
+        position:
+        "topright"
+
+    }
+
+).addTo(map);
+
+
+/* =====================================================
+   5. NORMALISASI FIELD
+===================================================== */
+
+function normalisasiField(nama) {
+
+    return String(nama)
+
+        .toLowerCase()
+
+        .replace(
+            /[\s_\-().]/g,
+            ""
+        );
+
+}
+
+
+/* =====================================================
+   6. CARI FIELD
+===================================================== */
+
+function cariField(
+
+    properties,
+
+    daftarNama
+
+) {
+
+
+    if (!properties) {
+
+        return null;
+
+    }
+
+
+    var keys =
+        Object.keys(properties);
+
+
+    for (
+        var i = 0;
+        i < keys.length;
+        i++
+    ) {
+
+
+        var namaAsli =
+            keys[i];
+
+
+        var namaNormal =
+            normalisasiField(
+                namaAsli
+            );
+
+
+        for (
+            var j = 0;
+            j < daftarNama.length;
+            j++
+        ) {
+
+
+            var targetNormal =
+                normalisasiField(
+                    daftarNama[j]
+                );
+
+
+            if (
+                namaNormal ===
+                targetNormal
+            ) {
+
+
+                var nilai =
+                    properties[namaAsli];
+
+
+                if (
+                    nilai !== null &&
+                    nilai !== undefined &&
+                    nilai !== ""
+                ) {
+
+                    return nilai;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =====================================================
+   7. KONVERSI ANGKA
+===================================================== */
+
+function keAngka(nilai) {
+
+
+    if (
+        nilai === null ||
+        nilai === undefined ||
+        nilai === ""
+    ) {
+
+        return null;
+
+    }
+
+
+    if (
+        typeof nilai === "number"
+    ) {
+
+        return nilai;
+
+    }
+
+
+    var teks =
+        String(nilai)
+        .trim();
+
+
+    /*
+     * Mendukung koma sebagai desimal
+     */
+
+    teks =
+        teks.replace(",", ".");
+
+
+    var angka =
+        parseFloat(teks);
+
+
+    if (
+        isNaN(angka)
+    ) {
+
+        return null;
+
+    }
+
+
+    return angka;
+
+}
+
+
+/* =====================================================
+   8. ID
+===================================================== */
+
+function cariID(
+
+    properties,
+
+    nomor
+
+) {
+
+
+    var nilai =
+        cariField(
+
+            properties,
+
+            [
+
+                "ID",
+
+                "id",
+
+                "Id",
+
+                "ID_BM",
+
+                "IDBM",
+
+                "ID_TITIK",
+
+                "ID TITIK",
+
+                "Kode",
+
+                "kode",
+
+                "Nama",
+
+                "nama"
+
+            ]
+
+        );
+
+
+    if (
+        nilai !== null
+    ) {
+
+        return String(nilai);
+
+    }
+
+
+    return "SDD" +
+        String(nomor)
+        .padStart(2, "0");
+
+}
+
+
+/* =====================================================
+   9. dE
+===================================================== */
+
+function cariDE(properties) {
+
+
+    var nilai =
+        cariField(
+
+            properties,
+
+            [
+
+                "dE",
+
+                "DE",
+
+                "de",
+
+                "Delta E",
+
+                "Delta_E",
+
+                "delta_e",
+
+                "d E",
+
+                "Displacement E",
+
+                "Displacement_E",
+
+                "East"
+
+            ]
+
+        );
+
+
+    return keAngka(nilai);
+
+}
+
+
+/* =====================================================
+   10. dN
+===================================================== */
+
+function cariDN(properties) {
+
+
+    var nilai =
+        cariField(
+
+            properties,
+
+            [
+
+                "dN",
+
+                "DN",
+
+                "dn",
+
+                "Delta N",
+
+                "Delta_N",
+
+                "delta_n",
+
+                "d N",
+
+                "Displacement N",
+
+                "Displacement_N",
+
+                "North"
+
+            ]
+
+        );
+
+
+    return keAngka(nilai);
+
+}
+
+
+/* =====================================================
+   11. dU
+===================================================== */
+
+function cariDU(properties) {
+
+
+    var nilai =
+        cariField(
+
+            properties,
+
+            [
+
+                "dU",
+
+                "DU",
+
+                "du",
+
+                "Delta U",
+
+                "Delta_U",
+
+                "delta_u",
+
+                "d U",
+
+                "Displacement U",
+
+                "Displacement_U",
+
+                "Up",
+
+                "Nilai DU",
+
+                "NILAI_DU",
+
+                "DU BM"
+
+            ]
+
+        );
+
+
+    return keAngka(nilai);
+
+}
+
+
+/* =====================================================
+   12. WARNA dU
+===================================================== */
+
+function warnaDU(du) {
+
+
+    if (
+        du === null
+    ) {
+
+        return "#607d8b";
+
+    }
+
+
+    if (
+        du < 0.30
+    ) {
+
+        return "#2e7d32";
+
+    }
+
+
+    if (
+        du < 0.50
+    ) {
+
+        return "#f57c00";
+
+    }
+
+
+    return "#c62828";
+
+}
+
+
+/* =====================================================
+   13. STATUS dU
+===================================================== */
+
+function statusDU(du) {
+
+
+    if (
+        du === null
+    ) {
+
+        return {
+
+            teks:
+            "Data DU tidak tersedia",
+
+            kelas:
+            "status-none"
+
+        };
+
+    }
+
+
+    if (
+        du < 0.30
+    ) {
+
+        return {
+
+            teks:
+            "Nilai dU rendah",
+
+            kelas:
+            "status-low"
+
+        };
+
+    }
+
+
+    if (
+        du < 0.50
+    ) {
+
+        return {
+
+            teks:
+            "Nilai dU sedang",
+
+            kelas:
+            "status-medium"
+
+        };
+
+    }
+
+
+    return {
+
+        teks:
+        "Nilai dU tinggi",
+
+        kelas:
+        "status-high"
+
+    };
+
+}
+
+
+/* =====================================================
+   14. FORMAT NILAI
+===================================================== */
+
+function formatNilai(nilai) {
+
+
+    if (
+        nilai === null
+    ) {
+
+        return "Tidak tersedia";
+
+    }
+
+
+    return nilai.toFixed(5);
+
+}
+
+
+/* =====================================================
+   15. POPUP
+===================================================== */
+
+function buatPopup(
+
+    id,
+
+    de,
+
+    dn,
+
+    du,
+
+    lat,
+
+    lon
+
+) {
+
+
+    var status =
+        statusDU(du);
+
+
+    var warna =
+        warnaDU(du);
+
+
+    return `
+
+    <div class="popup">
+
+
+        <div class="popup-header">
+
+            <div class="popup-title">
+
+                📍 Data Land Subsidence
+
+            </div>
+
+            <div class="popup-subtitle">
+
+                Desa Sidodadi
+
+            </div>
+
+        </div>
+
+
+
+        <div class="section-title">
+
+            🆔 IDENTITAS TITIK
+
+        </div>
+
+
+        <div class="data-row">
+
+            <span class="data-label">
+                ID Titik
+            </span>
+
+            <span class="data-value">
+                ${id}
+            </span>
+
+        </div>
+
+
+
+        <div class="section-title">
+
+            📌 KOORDINAT
+
+        </div>
+
+
+        <div class="data-row">
+
+            <span class="data-label">
+                Latitude
+            </span>
+
+            <span class="data-value">
+                ${lat.toFixed(6)}
+            </span>
+
+        </div>
+
+
+        <div class="data-row">
+
+            <span class="data-label">
+                Longitude
+            </span>
+
+            <span class="data-value">
+                ${lon.toFixed(6)}
+            </span>
+
+        </div>
+
+
+
+        <div class="section-title">
+
+            📊 DATA PERGESERAN
+
+        </div>
+
+
+        <div class="data-row">
+
+            <span class="data-label">
+                dE
+            </span>
+
+            <span class="data-value">
+
+                ${formatNilai(de)}
+
+            </span>
+
+        </div>
+
+
+        <div class="data-row">
+
+            <span class="data-label">
+                dN
+            </span>
+
+            <span class="data-value">
+
+                ${formatNilai(dn)}
+
+            </span>
+
+        </div>
+
+
+
+        <div class="du-box">
+
+            <div class="du-title">
+
+                dU / DU
+
+            </div>
+
+
+            <div
+                class="du-value"
+                style="color:${warna};"
+            >
+
+                ${formatNilai(du)}
+
+            </div>
+
+
+            <div
+                class="status ${status.kelas}"
+            >
+
+                ${status.teks}
+
+            </div>
+
+        </div>
+
+
+    </div>
+
     `;
 
-    return div;
-};
+}
 
-legend.addTo(map);
 
-    </script>
+/* =====================================================
+   16. MEMBACA DU_WebGIS.json
+===================================================== */
+
+fetch(
+    "DU_WebGIS.json"
+)
+
+
+.then(
+    function(response) {
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+
+                "DU_WebGIS.json tidak ditemukan."
+
+            );
+
+        }
+
+
+        return response.json();
+
+    }
+
+)
+
+
+.then(
+    function(data) {
+
+
+        console.log(
+            "DATA DU_WebGIS.json:",
+            data
+        );
+
+
+        /*
+         * Hapus loading
+         */
+
+        var loading =
+            document.getElementById(
+                "loading"
+            );
+
+
+        if (
+            loading
+        ) {
+
+            loading.remove();
+
+        }
+
+
+        /*
+         * Pastikan FeatureCollection
+         */
+
+        if (
+            data.type !==
+            "FeatureCollection"
+        ) {
+
+            throw new Error(
+
+                "File DU_WebGIS.json harus berupa GeoJSON FeatureCollection."
+
+            );
+
+        }
+
+
+        /*
+         * Pastikan ada feature
+         */
+
+        if (
+            !data.features ||
+            data.features.length === 0
+        ) {
+
+            throw new Error(
+
+                "Tidak ada data titik dalam DU_WebGIS.json."
+
+            );
+
+        }
+
+
+        /*
+         * Cek isi properties
+         */
+
+        data.features.forEach(
+
+            function(feature, index) {
+
+
+                console.log(
+                    "================================"
+                );
+
+                console.log(
+                    "Titik:",
+                    index + 1
+                );
+
+                console.log(
+                    "Properties:",
+                    feature.properties
+                );
+
+                console.log(
+                    "dE:",
+                    cariDE(
+                        feature.properties
+                    )
+                );
+
+                console.log(
+                    "dN:",
+                    cariDN(
+                        feature.properties
+                    )
+                );
+
+                console.log(
+                    "dU:",
+                    cariDU(
+                        feature.properties
+                    )
+                );
+
+            }
+
+        );
+
+
+        /*
+         * Buat layer GeoJSON
+         */
+
+        var geojsonLayer =
+            L.geoJSON(
+
+                data,
+
+                {
+
+
+                    /* =================================
+                       TITIK
+                    ================================== */
+
+                    pointToLayer:
+
+                    function(
+
+                        feature,
+
+                        latlng
+
+                    ) {
+
+
+                        var properties =
+                            feature.properties
+                            || {};
+
+
+                        var du =
+                            cariDU(
+                                properties
+                            );
+
+
+                        var warna =
+                            warnaDU(du);
+
+
+                        return L.circleMarker(
+
+                            latlng,
+
+                            {
+
+                                radius:
+                                10,
+
+                                fillColor:
+                                warna,
+
+                                color:
+                                "#ffffff",
+
+                                weight:
+                                3,
+
+                                fillOpacity:
+                                0.95
+
+                            }
+
+                        );
+
+                    },
+
+
+                    /* =================================
+                       INFORMASI TITIK
+                    ================================== */
+
+                    onEachFeature:
+
+                    function(
+
+                        feature,
+
+                        layer
+
+                    ) {
+
+
+                        var properties =
+                            feature.properties
+                            || {};
+
+
+                        /*
+                         * Nomor titik
+                         */
+
+                        var nomor =
+                            data.features
+                            .indexOf(feature)
+                            + 1;
+
+
+                        /*
+                         * ID
+                         */
+
+                        var id =
+                            cariID(
+
+                                properties,
+
+                                nomor
+
+                            );
+
+
+                        /*
+                         * dE
+                         */
+
+                        var de =
+                            cariDE(
+                                properties
+                            );
+
+
+                        /*
+                         * dN
+                         */
+
+                        var dn =
+                            cariDN(
+                                properties
+                            );
+
+
+                        /*
+                         * dU
+                         */
+
+                        var du =
+                            cariDU(
+                                properties
+                            );
+
+
+                        /*
+                         * Koordinat dari
+                         * GeoJSON
+                         */
+
+                        var posisi =
+                            layer.getLatLng();
+
+
+                        /*
+                         * Popup
+                         */
+
+                        layer.bindPopup(
+
+                            buatPopup(
+
+                                id,
+
+                                de,
+
+                                dn,
+
+                                du,
+
+                                posisi.lat,
+
+                                posisi.lng
+
+                            ),
+
+                            {
+
+                                maxWidth:
+                                350,
+
+                                minWidth:
+                                260
+
+                            }
+
+                        );
+
+
+                        /*
+                         * Label ID
+                         */
+
+                        L.marker(
+
+                            posisi,
+
+                            {
+
+                                icon:
+
+                                L.divIcon({
+
+                                    className:
+                                    "",
+
+                                    html:
+
+                                    `
+
+                                    <div
+                                    class="point-label">
+
+                                        ${id}
+
+                                    </div>
+
+                                    `,
+
+                                    iconSize:
+                                    [80,20],
+
+                                    iconAnchor:
+                                    [-8,10]
+
+                                }),
+
+                                interactive:
+                                false
+
+                            }
+
+                        ).addTo(map);
+
+                    }
+
+                }
+
+            ).addTo(map);
+
+
+        /*
+         * Zoom otomatis
+         */
+
+        var bounds =
+            geojsonLayer.getBounds();
+
+
+        if (
+            bounds.isValid()
+        ) {
+
+
+            map.fitBounds(
+
+                bounds,
+
+                {
+
+                    padding:
+                    [70,70],
+
+                    maxZoom:
+                    17
+
+                }
+
+            );
+
+        }
+
+
+    }
+
+)
+
+
+.catch(
+    function(error) {
+
+
+        console.error(
+            "ERROR:",
+            error
+        );
+
+
+        var loading =
+            document.getElementById(
+                "loading"
+            );
+
+
+        if (
+            loading
+        ) {
+
+            loading.remove();
+
+        }
+
+
+        var errorBox =
+            document.createElement(
+                "div"
+            );
+
+
+        errorBox.className =
+            "error-box";
+
+
+        errorBox.innerHTML = `
+
+            <h3>
+                ⚠️ Data Tidak Berhasil Dibaca
+            </h3>
+
+            <p>
+                ${error.message}
+            </p>
+
+            <hr>
+
+            <p
+            style="
+                font-size:10px;
+                line-height:1.7;
+                color:#607d8b;
+            "
+            >
+
+                Pastikan:
+
+                <br><br>
+
+                1. File bernama
+                <b>DU_WebGIS.json</b>
+
+                <br>
+
+                2. File berada satu folder
+                dengan <b>index.html</b>
+
+                <br>
+
+                3. Jalankan menggunakan
+                <b>Live Server</b>
+
+                <br>
+
+                4. File menggunakan format
+                <b>GeoJSON</b>
+
+            </p>
+
+        `;
+
+
+        document
+        .getElementById("map")
+        .appendChild(errorBox);
+
+    }
+
+);
+
+
+/* =====================================================
+   17. SKALA PETA
+===================================================== */
+
+L.control.scale(
+
+    {
+
+        metric:
+        true,
+
+        imperial:
+        false,
+
+        position:
+        "bottomleft"
+
+    }
+
+).addTo(map);
+
+
+</script>
+
 
 </body>
-</html>
 
+</html>
