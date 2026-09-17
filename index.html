@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WebGIS Land Subsidence</title>
+
+    <!-- CSS Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            background: #ffffff;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+        }
+
+        #map {
+            width: 100%;
+            height: calc(100vh - 90px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>WebGIS Land Subsidence</h2>
+        <p>Di Desa Sidodadi</p>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- JavaScript Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Membuat peta
+        const map = L.map('map').setView([-5.55, 105.23], 14);
+
+        // Basemap OpenStreetMap
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+        // Fungsi untuk membaca nilai DU walaupun nama field berbeda huruf besar/kecil
+        function ambilDU(properties) {
+            return properties.dU ??
+                   properties.DU ??
+                   properties.du ??
+                   properties.Du ??
+                   '-';
+        }
+
+        // Membaca file GeoJSON
+        fetch('DU_WebGIS.json')
+            .then(response => response.json())
+            .then(data => {
+
+                const layerDU = L.geoJSON(data, {
+
+                    // Tampilan titik
+                    pointToLayer: function(feature, latlng) {
+
+                        const du = Number(ambilDU(feature.properties));
+
+                        let warna = 'blue';
+
+                        if (!isNaN(du)) {
+                            if (du >= 0.5) {
+                                warna = 'red';
+                            } else {
+                                warna = 'green';
+                            }
+                        }
+
+                        return L.circleMarker(latlng, {
+                            radius: 9,
+                            fillColor: warna,
+                            color: '#000000',
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.9
+                        });
+                    },
+
+                    // Informasi ketika titik diklik
+                    onEachFeature: function(feature, layer) {
+
+                        const p = feature.properties;
+                        const du = ambilDU(p);
+
+                        const popup = `
+                            <b>Data Land Subsidence</b><br><br>
+                            <b>ID:</b> ${p.ID ?? '-'}<br>
+                            <b>Longitude:</b> ${p.Longitude ?? '-'}<br>
+                            <b>Latitude:</b> ${p.Latitude ?? '-'}<br>
+                            <b>dN:</b> ${p.dN ?? '-'}<br>
+                            <b>dE:</b> ${p.dE ?? '-'}<br>
+                            <b>DU:</b> ${du}
+                        `;
+
+                        layer.bindPopup(popup);
+                    }
+
+                }).addTo(map);
+
+                // Zoom otomatis mengikuti data
+                map.fitBounds(layerDU.getBounds(), {
+                    padding: [50, 50],
+                    maxZoom: 16
+                });
+            })
+
+            .catch(error => {
+                console.error('Data GeoJSON gagal dibaca:', error);
+            });
+
+        // Scale bar
+        L.control.scale({
+            metric: true,
+            imperial: false
+        }).addTo(map);
+        // Legenda
+const legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function(map) {
+
+    const div = L.DomUtil.create('div', 'info legend');
+
+    div.innerHTML = `
+        <b>Keterangan DU</b><br>
+        <span style="display:inline-block;width:15px;height:15px;background:green;border-radius:50%;"></span>
+        DU &lt; 0,5<br>
+
+        <span style="display:inline-block;width:15px;height:15px;background:red;border-radius:50%;"></span>
+        DU ≥ 0,5
+    `;
+
+    return div;
+};
+
+legend.addTo(map);
+
+    </script>
+
+</body>
+</html>
+
